@@ -14,7 +14,7 @@
         app:layout_constraintBottom_toTopOf="@+id/theBoard">
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/redLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -23,7 +23,7 @@
             android:textSize="24sp" />
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/yellowLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"

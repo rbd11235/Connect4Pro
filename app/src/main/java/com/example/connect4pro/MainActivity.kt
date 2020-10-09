@@ -6,7 +6,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
-
+private const val RED = 1
+private const val YELLOW = 2
 class MainActivity : AppCompatActivity() {
 
     private lateinit var one_player: Button
@@ -22,13 +23,13 @@ class MainActivity : AppCompatActivity() {
 
         one_player.setOnClickListener { view: View ->
 
-            val intent = GameActivity.newIntent(this@MainActivity, true, "red")
+            val intent = GameActivity.newIntent(this@MainActivity, true, RED)
             startActivity(intent)
         }
 
         two_player.setOnClickListener { view: View ->
 
-            val intent = GameActivity.newIntent(this@MainActivity, false, "red")
+            val intent = GameActivity.newIntent(this@MainActivity, false, RED)
             startActivityForResult(intent, 0)
         }
     }
