@@ -29,7 +29,8 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="Yellow's Turn"
-            android:textSize="24sp" />
+            android:textSize="24sp"
+            tools:visibility="invisible" />
     </LinearLayout>
 
     <TableLayout

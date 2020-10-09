@@ -164,8 +164,38 @@ class GameActivity : AppCompatActivity() {
         //Check if game over
 
             //End game setup
+        changeTurn()
 
-        //
+    }
+
+    private fun changeTurn()
+    {
+        if(gameModel.whoseTurn == RED)
+        {
+            gameModel.whoseTurn = YELLOW
+            redLabel.visibility = View.INVISIBLE
+            yellowLabel.visibility = View.VISIBLE
+            button1.setImageResource(R.drawable.yellowpiece)
+            button2.setImageResource(R.drawable.yellowpiece)
+            button3.setImageResource(R.drawable.yellowpiece)
+            button4.setImageResource(R.drawable.yellowpiece)
+            button5.setImageResource(R.drawable.yellowpiece)
+            button6.setImageResource(R.drawable.yellowpiece)
+            button7.setImageResource(R.drawable.yellowpiece)
+        }
+        else if(gameModel.whoseTurn == YELLOW)
+        {
+            gameModel.whoseTurn = RED
+            redLabel.visibility = View.VISIBLE
+            yellowLabel.visibility = View.INVISIBLE
+            button1.setImageResource(R.drawable.redpiece)
+            button2.setImageResource(R.drawable.redpiece)
+            button3.setImageResource(R.drawable.redpiece)
+            button4.setImageResource(R.drawable.redpiece)
+            button5.setImageResource(R.drawable.redpiece)
+            button6.setImageResource(R.drawable.redpiece)
+            button7.setImageResource(R.drawable.redpiece)
+        }
     }
 
     private fun placePiece(color: Int, slot: Int)
