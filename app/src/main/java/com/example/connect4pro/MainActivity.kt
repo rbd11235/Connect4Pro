@@ -18,8 +18,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val currentFragment =
+            supportFragmentManager.findFragmentById(R.id.fragment_container)
+
         one_player = findViewById(R.id.one_player)
         two_player = findViewById(R.id.two_player)
+        replays = findViewById(R.id.replays)
 
         one_player.setOnClickListener { view: View ->
 
@@ -31,6 +35,17 @@ class MainActivity : AppCompatActivity() {
 
             val intent = GameActivity.newIntent(this@MainActivity, false, RED)
             startActivityForResult(intent, 0)
+        }
+
+        replays.setOnClickListener { view: View ->
+            if (currentFragment == null) {
+                val fragment = GameListFragment()
+                supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, fragment)
+                    .addToBackStack(null)
+                    .commit()
+            }
         }
     }
 }
