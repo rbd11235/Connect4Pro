@@ -23,7 +23,7 @@
             android:gravity="center"
             android:padding="24dp"
             android:textSize="50sp"
-            tools:text="Connect-4 Pro" />
+            android:text="Connect-4 Pro" />
 
 
         <Button

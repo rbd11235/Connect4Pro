@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -22,9 +23,14 @@ private const val YELLOW = 2
 class GameActivity : AppCompatActivity() {
     private lateinit var redLabel: TextView
     private lateinit var yellowLabel: TextView
+    private lateinit var winLabel: TextView
 
+    private lateinit var newGame: Button
+    private lateinit var saveReplay: Button
     //Two dimensional array containing all the ImageViews that make up the board
     private lateinit var pieces: Array<Array<ImageView>>
+    private lateinit var buttons: Array<ImageButton>
+
 
     private lateinit var button1: ImageButton
     private lateinit var button2: ImageButton
@@ -43,6 +49,7 @@ class GameActivity : AppCompatActivity() {
         setContentView(R.layout.activity_game)
         redLabel = findViewById(R.id.redLabel)
         yellowLabel = findViewById(R.id.yellowLabel)
+        winLabel = findViewById(R.id.win_label)
 
         button1 = findViewById(R.id.drop1)
         button2 = findViewById(R.id.drop2)
@@ -51,6 +58,9 @@ class GameActivity : AppCompatActivity() {
         button5 = findViewById(R.id.drop5)
         button6 = findViewById(R.id.drop6)
         button7 = findViewById(R.id.drop7)
+        buttons = arrayOf(button1, button2, button3, button4, button5, button6, button7)
+        newGame = findViewById(R.id.new_game)
+        saveReplay = findViewById(R.id.save_replay)
 
 
         val A1: ImageView = findViewById(R.id.A1)
@@ -154,6 +164,16 @@ class GameActivity : AppCompatActivity() {
             takeTurn(gameModel.whoseTurn, 7)
 
         }
+
+        newGame.setOnClickListener { view: View ->
+           resetGame()
+        }
+
+        saveReplay.setOnClickListener { view: View ->
+
+
+        }
+
     }
 
     private fun takeTurn(color: Int, slot: Int)
@@ -161,12 +181,313 @@ class GameActivity : AppCompatActivity() {
 
         placePiece(color, slot)
 
-        //Check if game over
-
-            //End game setup
-        changeTurn()
+        if(fourInARow())
+        {
+           declareWinner(false)
+        }
+        else if(fullBoard())
+        {
+            declareWinner(true)
+        }
+        else
+        {
+            changeTurn()
+        }
 
     }
+
+    private fun fullBoard(): Boolean
+    {
+        for(i in 0..6)
+        {
+            if(gameModel.gameBoard[5][i] == 0)
+            {
+                return false
+            }
+        }
+        return true
+    }
+
+    private fun resetGame()
+    {
+        redLabel.visibility = View.VISIBLE
+        yellowLabel.visibility = View.INVISIBLE
+        winLabel.visibility = View.INVISIBLE
+        newGame.visibility = View.INVISIBLE
+        saveReplay.visibility = View.INVISIBLE
+
+        for(i in 0..6)
+        {
+            buttons[i].visibility = View.VISIBLE
+            buttons[i].setImageResource(R.drawable.redpiece)
+        }
+
+
+        gameModel.whoseTurn = RED
+        gameModel.moveList = ""
+        gameModel.playerColor = RED
+        for(row in 0..5)
+        {
+            for(col in 0..6)
+            {
+                gameModel.gameBoard[row][col] = 0
+                pieces[row][col].setImageResource(R.drawable.emptypiece)
+            }
+        }
+
+
+    }
+
+    private fun fourInARow(): Boolean
+    {
+        var foundMatch = false
+        var matchedMain: MutableList<ImageView> = ArrayList()
+        for(row in 0..5)
+        {
+            for(col in 0..6)
+            {
+                if(gameModel.gameBoard[row][col] != 0)
+                {
+                    //Check Up
+                    if(row <= 2)
+                    {
+                        var inARow = 0
+                        var chainBroken = false
+                        var matchedSub: MutableList<ImageView> = ArrayList()
+                        for(i in row..5)
+                        {
+                            if(chainBroken == false)
+                            {
+                                if(gameModel.gameBoard[i][col] == gameModel.gameBoard[row][col])
+                                {
+                                    inARow += 1
+                                    matchedSub.add(pieces[i][col])
+                                }
+                                else
+                                {
+                                    chainBroken = true
+                                }
+                            }
+                        }
+
+                        if(inARow >= 4)
+                        {
+                            foundMatch = true
+                            for(element in matchedSub)
+                            {
+                                if(!matchedMain.contains(element))
+                                {
+                                    matchedMain.add(element)
+                                }
+                            }
+                        }
+                    }
+
+                    //Check Right
+                    if(col <= 3)
+                    {
+                        var inARow = 0
+                        var chainBroken = false
+                        var matchedSub: MutableList<ImageView> = ArrayList()
+                        for(i in col..6)
+                        {
+                            if(chainBroken == false)
+                            {
+                                if(gameModel.gameBoard[row][i] == gameModel.gameBoard[row][col])
+                                {
+                                    inARow += 1
+                                    matchedSub.add(pieces[row][i])
+                                }
+                                else
+                                {
+                                    chainBroken = true
+                                }
+                            }
+                        }
+
+                        if(inARow >= 4)
+                        {
+                            foundMatch = true
+                            for(element in matchedSub)
+                            {
+                                if(!matchedMain.contains(element))
+                                {
+                                    matchedMain.add(element)
+                                }
+                            }
+                        }
+                    }
+
+                    //Check Up Right
+                    if(row <= 2 && col <= 3)
+                    {
+                        var distRight = 7 - col
+                        var distUp = 6 - row
+                        var maxDistance = 0
+
+
+                        if(distRight >= distUp)
+                        {
+                            maxDistance = distUp
+                        }
+                        else
+                        {
+                            maxDistance = distRight
+                        }
+
+                        var inARow = 0
+                        var chainBroken = false
+                        var matchedSub: MutableList<ImageView> = ArrayList()
+
+                        for(i in 0 until maxDistance)
+                        {
+                            if(chainBroken == false)
+                            {
+                                if(gameModel.gameBoard[row+i][col+i] == gameModel.gameBoard[row][col])
+                                {
+                                    inARow += 1
+                                    matchedSub.add(pieces[row+i][col+i])
+                                }
+                                else
+                                {
+                                    chainBroken = true
+                                }
+                            }
+                        }
+
+                        if(inARow >= 4)
+                        {
+                            foundMatch = true
+                            for(element in matchedSub)
+                            {
+                                if(!matchedMain.contains(element))
+                                {
+                                    matchedMain.add(element)
+                                }
+                            }
+                        }
+
+                    }
+
+                    //Check Up Left
+                    if(row <= 2 && col >= 3)
+                    {
+                        var distLeft = col + 1
+                        var distUp = 6 - row
+                        var maxDistance = 0
+
+
+                        if(distLeft >= distUp)
+                        {
+                            maxDistance = distUp
+                        }
+                        else
+                        {
+                            maxDistance = distLeft
+                        }
+
+                        var inARow = 0
+                        var chainBroken = false
+                        var matchedSub: MutableList<ImageView> = ArrayList()
+
+                        for(i in 0 until maxDistance)
+                        {
+                            if(chainBroken == false)
+                            {
+                                if(gameModel.gameBoard[row+i][col-i] == gameModel.gameBoard[row][col])
+                                {
+                                    inARow += 1
+                                    matchedSub.add(pieces[row+i][col-i])
+                                }
+                                else
+                                {
+                                    chainBroken = true
+                                }
+                            }
+                        }
+
+                        if(inARow >= 4)
+                        {
+                            foundMatch = true
+                            for(element in matchedSub)
+                            {
+                                if(!matchedMain.contains(element))
+                                {
+                                    matchedMain.add(element)
+                                }
+                            }
+                        }
+
+                    }
+                }
+
+
+
+                //Check Up Right
+
+                //Check Up Left
+            }
+        }
+        //Highlights the winning pieces
+        if(foundMatch)
+        {
+            for(i in 0..5)
+            {
+                for(j in 0..6)
+                {
+                    pieces[i][j].setImageResource(R.drawable.emptypiece)
+                }
+            }
+            for(element in matchedMain)
+            {
+                if(gameModel.whoseTurn == RED)
+                {
+                    element.setImageResource(R.drawable.redpiece)
+                }
+                else if(gameModel.whoseTurn == YELLOW)
+                {
+                    element.setImageResource(R.drawable.yellowpiece)
+                }
+            }
+        }
+        return foundMatch
+    }
+
+
+    private fun declareWinner(tie: Boolean)
+    {
+
+        redLabel.visibility = View.INVISIBLE
+        yellowLabel.visibility = View.INVISIBLE
+        winLabel.visibility = View.VISIBLE
+        newGame.visibility = View.VISIBLE
+        saveReplay.visibility = View.VISIBLE
+
+        gameModel.moveList = gameModel.moveList + "0"
+
+        for(i in 0..6)
+        {
+            buttons[i].visibility = View.INVISIBLE
+        }
+
+        if(!tie)
+        {
+            if(gameModel.whoseTurn == RED)
+            {
+                winLabel.text = getString(R.string.red_wins)
+            }
+            else if(gameModel.whoseTurn == YELLOW)
+            {
+                winLabel.text = getString(R.string.yellow_wins)
+            }
+        }
+        else
+        {
+            winLabel.text = getString(R.string.tied_game)
+        }
+
+    }
+
 
     private fun changeTurn()
     {
@@ -175,33 +496,37 @@ class GameActivity : AppCompatActivity() {
             gameModel.whoseTurn = YELLOW
             redLabel.visibility = View.INVISIBLE
             yellowLabel.visibility = View.VISIBLE
-            button1.setImageResource(R.drawable.yellowpiece)
-            button2.setImageResource(R.drawable.yellowpiece)
-            button3.setImageResource(R.drawable.yellowpiece)
-            button4.setImageResource(R.drawable.yellowpiece)
-            button5.setImageResource(R.drawable.yellowpiece)
-            button6.setImageResource(R.drawable.yellowpiece)
-            button7.setImageResource(R.drawable.yellowpiece)
+            for(i in 0..6)
+            {
+                buttons[i].setImageResource(R.drawable.yellowpiece)
+            }
+
         }
         else if(gameModel.whoseTurn == YELLOW)
         {
             gameModel.whoseTurn = RED
             redLabel.visibility = View.VISIBLE
             yellowLabel.visibility = View.INVISIBLE
-            button1.setImageResource(R.drawable.redpiece)
-            button2.setImageResource(R.drawable.redpiece)
-            button3.setImageResource(R.drawable.redpiece)
-            button4.setImageResource(R.drawable.redpiece)
-            button5.setImageResource(R.drawable.redpiece)
-            button6.setImageResource(R.drawable.redpiece)
-            button7.setImageResource(R.drawable.redpiece)
+
+            for(i in 0..6)
+            {
+                buttons[i].setImageResource(R.drawable.redpiece)
+            }
+        }
+
+        for(i in 0..6)
+        {
+            if(gameModel.gameBoard[5][i] != 0)
+            {
+                buttons[i].visibility = View.INVISIBLE
+            }
         }
     }
 
     private fun placePiece(color: Int, slot: Int)
     {
         var row = -1
-
+        gameModel.moveList = gameModel.moveList + slot.toString()
         for(x in 5 downTo(0))
         {
             if(gameModel.gameBoard[x][slot-1] == 0)
@@ -224,11 +549,11 @@ class GameActivity : AppCompatActivity() {
     //If we have time, we can add more complex "animation"
     private fun anim(color: Int, row: Int, col: Int)
     {
-        if(color == 1)
+        if(color == RED)
         {
             pieces[row][col].setImageResource(R.drawable.redpiece)
         }
-        else if(color == 2)
+        else if(color == YELLOW)
         {
             pieces[row][col].setImageResource(R.drawable.yellowpiece)
         }
