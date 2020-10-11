@@ -11,6 +11,8 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.ViewModelProviders
+import kotlin.random.Random
+import kotlin.random.nextInt
 
 private const val ID1 =
     "private.withAI"
@@ -130,37 +132,50 @@ class GameActivity : AppCompatActivity() {
         gameModel.playerColor = intent.getIntExtra(ID2, 1)
         //Red always starts the game
         gameModel.whoseTurn = RED
+        yellowLabel.visibility = View.INVISIBLE
+        if(gameModel.playerColor == YELLOW && gameModel.withAI)
+        {
+            val slot = aiChooseSlot()
+            takeTurn(gameModel.whoseTurn, slot)
+        }
         button1.setOnClickListener { view: View ->
+            button1.isEnabled = false
            takeTurn(gameModel.whoseTurn, 1)
 
         }
 
         button2.setOnClickListener { view: View ->
+            button2.isEnabled = false
             takeTurn(gameModel.whoseTurn, 2)
 
         }
 
         button3.setOnClickListener { view: View ->
+            button3.isEnabled = false
             takeTurn(gameModel.whoseTurn, 3)
 
         }
 
         button4.setOnClickListener { view: View ->
+            button4.isEnabled = false
             takeTurn(gameModel.whoseTurn, 4)
 
         }
 
         button5.setOnClickListener { view: View ->
+            button5.isEnabled = false
             takeTurn(gameModel.whoseTurn, 5)
 
         }
 
         button6.setOnClickListener { view: View ->
+            button6.isEnabled = false
             takeTurn(gameModel.whoseTurn, 6)
 
         }
 
         button7.setOnClickListener { view: View ->
+            button7.isEnabled = false
             takeTurn(gameModel.whoseTurn, 7)
 
         }
@@ -170,7 +185,13 @@ class GameActivity : AppCompatActivity() {
         }
 
         saveReplay.setOnClickListener { view: View ->
+            var gameReplay = Game()
+            gameReplay.gameString = gameModel.moveList
+            gameReplay.moveNumber = gameModel.moveList.length - 1
+            gameReplay.winner = gameModel.winner
 
+
+            //TODO("Save gameReplay here")
 
         }
 
@@ -192,8 +213,11 @@ class GameActivity : AppCompatActivity() {
         else
         {
             changeTurn()
+            for(i in 0..6)
+            {
+                buttons[i].isEnabled = true
+            }
         }
-
     }
 
     private fun fullBoard(): Boolean
@@ -219,13 +243,14 @@ class GameActivity : AppCompatActivity() {
         for(i in 0..6)
         {
             buttons[i].visibility = View.VISIBLE
+            buttons[i].isEnabled = true
             buttons[i].setImageResource(R.drawable.redpiece)
         }
 
 
         gameModel.whoseTurn = RED
         gameModel.moveList = ""
-        gameModel.playerColor = RED
+        gameModel.playerColor = Random.nextInt(1..2)
         for(row in 0..5)
         {
             for(col in 0..6)
@@ -235,7 +260,11 @@ class GameActivity : AppCompatActivity() {
             }
         }
 
-
+        if(gameModel.playerColor == YELLOW && gameModel.withAI)
+        {
+            val slot = aiChooseSlot()
+            takeTurn(gameModel.whoseTurn, slot)
+        }
     }
 
     private fun fourInARow(): Boolean
@@ -464,7 +493,6 @@ class GameActivity : AppCompatActivity() {
         saveReplay.visibility = View.VISIBLE
 
         gameModel.moveList = gameModel.moveList + "0"
-
         for(i in 0..6)
         {
             buttons[i].visibility = View.INVISIBLE
@@ -475,15 +503,18 @@ class GameActivity : AppCompatActivity() {
             if(gameModel.whoseTurn == RED)
             {
                 winLabel.text = getString(R.string.red_wins)
+                gameModel.winner = "Red"
             }
             else if(gameModel.whoseTurn == YELLOW)
             {
                 winLabel.text = getString(R.string.yellow_wins)
+                gameModel.winner = "Yellow"
             }
         }
         else
         {
             winLabel.text = getString(R.string.tied_game)
+            gameModel.winner = "Tie"
         }
 
     }
@@ -491,6 +522,7 @@ class GameActivity : AppCompatActivity() {
 
     private fun changeTurn()
     {
+
         if(gameModel.whoseTurn == RED)
         {
             gameModel.whoseTurn = YELLOW
@@ -521,6 +553,30 @@ class GameActivity : AppCompatActivity() {
                 buttons[i].visibility = View.INVISIBLE
             }
         }
+
+
+        if(gameModel.withAI && gameModel.whoseTurn != gameModel.playerColor)
+        {
+
+            var slot = aiChooseSlot()
+            takeTurn(gameModel.whoseTurn, slot)
+        }
+
+    }
+
+    private fun aiChooseSlot(): Int
+    {
+        var availableSlots: MutableList<Int> = ArrayList()
+
+        for(i in 0..6)
+        {
+            if(buttons[i].visibility == View.VISIBLE)
+            {
+                availableSlots.add(i+1)
+            }
+        }
+        val x = availableSlots.size - 1
+        return availableSlots[Random.nextInt(0..x)]
     }
 
     private fun placePiece(color: Int, slot: Int)

@@ -19,6 +19,7 @@ class GameModel: ViewModel() {
     var withAI = false
     var whoseTurn = 1
     var moveList = ""
+    var winner = "Tie"
 
 
 }

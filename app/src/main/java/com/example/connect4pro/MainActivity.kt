@@ -6,6 +6,9 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import kotlin.random.Random
+import kotlin.random.nextInt
+
 private const val RED = 1
 private const val YELLOW = 2
 class MainActivity : AppCompatActivity() {
@@ -27,7 +30,7 @@ class MainActivity : AppCompatActivity() {
 
         one_player.setOnClickListener { view: View ->
 
-            val intent = GameActivity.newIntent(this@MainActivity, true, RED)
+            val intent = GameActivity.newIntent(this@MainActivity, true, Random.nextInt(1..2))
             startActivity(intent)
         }
 
