@@ -1,6 +1,7 @@
 package com.example.connect4pro
 
 import android.content.ClipData.newIntent
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -21,9 +22,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val currentFragment =
-            supportFragmentManager.findFragmentById(R.id.fragment_container)
-
         one_player = findViewById(R.id.one_player)
         two_player = findViewById(R.id.two_player)
         replays = findViewById(R.id.replays)
@@ -41,14 +39,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         replays.setOnClickListener { view: View ->
-            if (currentFragment == null) {
-                val fragment = GameListFragment()
-                supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, fragment)
-                    .addToBackStack(null)
-                    .commit()
-            }
+            val intent = Intent(this, GameListActivity::class.java)
+            startActivity(intent)
         }
     }
 }

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 
 class GameListViewModel : ViewModel() {
 
+    /*
     val games = mutableListOf<Game>()
 
     init {
@@ -14,5 +15,8 @@ class GameListViewModel : ViewModel() {
             game.winner = "Red"
             games += game
         }
-    }
+    }*/
+
+    private val gameRepository = GameRepository.get()
+    val gameListLiveData = gameRepository.getGames()
 }
