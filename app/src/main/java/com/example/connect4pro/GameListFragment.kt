@@ -1,5 +1,6 @@
 package com.example.connect4pro
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,21 +12,32 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.lifecycle.Observer
+import java.util.*
 
 private const val TAG = "GameListFragment"
 
 class GameListFragment : Fragment() {
 
+    /**
+     * Required interface for hosting activities
+     */
+    interface Callbacks {
+        fun onGameSelected(gameId: UUID)
+    }
+
+    private var callbacks: Callbacks? = null
+
     private lateinit var gameRecyclerView: RecyclerView
-    private var adapter: GameAdapter? = null
+    private var adapter: GameAdapter? = GameAdapter(emptyList())
 
     private val gameListViewModel: GameListViewModel by lazy {
         ViewModelProviders.of(this).get(GameListViewModel::class.java)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Log.d(TAG, "Total games: ${gameListViewModel.games.size}")
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callbacks = context as Callbacks?
     }
 
     override fun onCreateView(
@@ -38,14 +50,29 @@ class GameListFragment : Fragment() {
         gameRecyclerView =
             view.findViewById(R.id.game_recycler_view) as RecyclerView
         gameRecyclerView.layoutManager = LinearLayoutManager(context)
-
-        updateUI()
+        gameRecyclerView.adapter = adapter
 
         return view
     }
 
-    private fun updateUI() {
-        val games = gameListViewModel.games
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        gameListViewModel.gameListLiveData.observe(
+            viewLifecycleOwner,
+            Observer { games ->
+                games?.let {
+                    Log.i(TAG, "Got games ${games.size}")
+                    updateUI(games)
+                }
+            })
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        callbacks = null
+    }
+
+    private fun updateUI(games: List<Game>) {
         adapter = GameAdapter(games)
         gameRecyclerView.adapter = adapter
     }
@@ -71,8 +98,7 @@ class GameListFragment : Fragment() {
         }
 
         override fun onClick(v: View) {
-            Toast.makeText(context, "${game.moveNumber} pressed!", Toast.LENGTH_SHORT)
-                .show()
+            callbacks?.onGameSelected(game.id)
         }
     }
 
