@@ -601,6 +601,35 @@ class GameActivity : AppCompatActivity() {
         }
     }
 
+    private fun removePiece(slot: Int)
+    {
+        var row = -1
+
+        //currentTurn -= 1
+
+
+        for(x in 5 downTo(0))
+        {
+            if(gameModel.gameBoard[x][slot-1] != 0)
+            {
+                if(row == -1)
+                {
+                    row = x
+                }
+
+            }
+        }
+        if(row == -1)
+        {
+            Log.d("Errors", "No piece in column to remove")
+        }
+        else
+        {
+            gameModel.gameBoard[row][slot-1] = 0
+            pieces[row][slot-1].setImageResource(R.drawable.emptypiece)
+        }
+    }
+
     //Updates the image views to place the piece on the board
     //If we have time, we can add more complex "animation"
     private fun anim(color: Int, row: Int, col: Int)
@@ -613,6 +642,7 @@ class GameActivity : AppCompatActivity() {
         {
             pieces[row][col].setImageResource(R.drawable.yellowpiece)
         }
+
     }
     companion object {
         fun newIntent(packageContext: Context, withAI: Boolean, playerColor: Int): Intent {

@@ -25,7 +25,6 @@ class MainActivity : AppCompatActivity() {
         one_player = findViewById(R.id.one_player)
         two_player = findViewById(R.id.two_player)
         replays = findViewById(R.id.replays)
-
         one_player.setOnClickListener { view: View ->
 
             val intent = GameActivity.newIntent(this@MainActivity, true, Random.nextInt(1..2))
