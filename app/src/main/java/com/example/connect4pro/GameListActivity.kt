@@ -1,5 +1,6 @@
 package com.example.connect4pro
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -24,12 +25,17 @@ class GameListActivity : AppCompatActivity(), GameListFragment.Callbacks {
         }
     }
 
-    override fun onGameSelected(gameId: UUID) {
+    override fun onGameSelected(replayString: String, winner: String) {
+        /*
         val fragment = ReplayFragment.newInstance(gameId)
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragment_container, fragment)
             .addToBackStack(null)
             .commit()
+
+         */
+        val intent = ReplayActivity.newIntent(this@GameListActivity, replayString, winner)
+        startActivity(intent)
     }
 }

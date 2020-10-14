@@ -46,6 +46,11 @@ class GameActivity : AppCompatActivity() {
     private val gameModel: GameModel by lazy {
         ViewModelProviders.of(this).get(GameModel::class.java)
     }
+
+    private val replayDetailViewModel: ReplayDetailViewModel by lazy {
+        ViewModelProviders.of(this).get(ReplayDetailViewModel::class.java)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
@@ -192,6 +197,7 @@ class GameActivity : AppCompatActivity() {
 
 
             //TODO("Save gameReplay here")
+            replayDetailViewModel.saveGame(gameReplay)
 
         }
 

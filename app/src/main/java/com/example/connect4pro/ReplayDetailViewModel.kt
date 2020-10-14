@@ -21,6 +21,6 @@ class ReplayDetailViewModel() : ViewModel() {
     }
 
     fun saveGame(game: Game) {
-        gameRepository.updateGame(game)
+        gameRepository.addGame(game)
     }
 }

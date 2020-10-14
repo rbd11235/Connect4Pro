@@ -23,7 +23,7 @@ class GameListFragment : Fragment() {
      * Required interface for hosting activities
      */
     interface Callbacks {
-        fun onGameSelected(gameId: UUID)
+        fun onGameSelected(replayString: String, winner: String)
     }
 
     private var callbacks: Callbacks? = null
@@ -98,7 +98,7 @@ class GameListFragment : Fragment() {
         }
 
         override fun onClick(v: View) {
-            callbacks?.onGameSelected(game.id)
+            callbacks?.onGameSelected(game.gameString, game.winner)
         }
     }
 
