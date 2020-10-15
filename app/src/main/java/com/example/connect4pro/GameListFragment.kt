@@ -92,9 +92,9 @@ class GameListFragment : Fragment() {
 
         fun bind(game: Game){
             this.game = game
-            winnerTextView.text = game.winner
-            movesTextView.text = game.moveNumber.toString()
-            dateTextView.text = game.date.toString()
+            winnerTextView.text = "Winner: " + game.winner
+            movesTextView.text = "Moves: " + game.moveNumber.toString()
+            dateTextView.text = "Date Played: " + game.date.toString()
         }
 
         override fun onClick(v: View) {
